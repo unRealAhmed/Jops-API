@@ -3,6 +3,7 @@ const express = require('express');
 const errorController = require('./controllers/errorController');
 const jobRouter = require('./routes/jobRoutes');
 const userRouter = require('./routes/userRoutes');
+const { protect } = require('./controllers/authController');
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -13,7 +14,7 @@ const connectDatabase = require("./utilities/dataBase");
 app.use(express.json());
 
 // Routes
-app.use('/api/v1/jobs', jobRouter);
+app.use('/api/v1/jobs', protect, jobRouter);
 app.use('/api/v1/users', userRouter);
 
 // Database Connection
