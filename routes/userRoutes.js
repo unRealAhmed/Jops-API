@@ -1,9 +1,14 @@
-const express = require('express')
-const { signup, login } = require('../controllers/authController')
+const express = require('express');
 
-const router = express.Router()
+// Import authentication controller methods
+const { signup, login } = require('../controllers/authController');
 
-router.post('/signup', signup)
-router.post('/login', login)
+// Create a router instance
+const router = express.Router();
 
-module.exports = router
+// Define routes for authentication
+router.post('/signup', signup);
+router.post('/login', login);
+
+// Export the router
+module.exports = router;
