@@ -1,7 +1,8 @@
 require("dotenv").config({ path: './config.env' }); // Load environmental variables
-
 const express = require('express');
 const errorController = require('./controllers/errorController');
+const jobRouter = require('./routes/jobRoutes');
+const userRouter = require('./routes/userRoutes');
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -12,7 +13,8 @@ const connectDatabase = require("./utilities/dataBase");
 app.use(express.json());
 
 // Routes
-// app.use('/api/v1/products', productRouter);
+app.use('/api/v1/jobs', jobRouter);
+app.use('/api/v1/users', userRouter);
 
 // Database Connection
 connectDatabase();
@@ -30,7 +32,10 @@ app.all("*", (req, _, next) => {
 app.use(errorController);
 
 // Start the server and listen on the defined port
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
-
+try {
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+} catch (error) {
+  console.error('An error occurred while starting the server:', error);
+}
