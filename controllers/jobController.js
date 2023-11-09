@@ -4,9 +4,6 @@ const APIFeatures = require('../utilities/apiFeatures')
 const AppError = require('../utilities/appErrors')
 
 
-
-
-
 exports.getAllJobs = asyncHandler(async (req, res, next) => {
 
   const features = new APIFeatures(Job.find(), req.query)
@@ -55,11 +52,15 @@ exports.createJob = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateJob = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id
+  const jobId = req.params.id
+  const { company, position } = req.body
 
-  const updatedJob = await Job.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  const updatedJob = await Job.findOneAndUpdate(
+    { _id: jobId, createdBy: userId },
+    { company, position },
+    { new: true, runValidators: true }
+  )
 
   if (!updatedJob) {
     return next(new AppError('No job found with that ID', 404));
@@ -72,7 +73,13 @@ exports.updateJob = asyncHandler(async (req, res, next) => {
 });
 
 exports.deleteJob = asyncHandler(async (req, res, next) => {
-  const deletedJob = await Job.findByIdAndDelete(req.params.id);
+  const userId = req.user.id
+  const jobId = req.params.id
+
+  const deletedJob = await Job.findOneAndDelete({
+    _id: jobId,
+    createdBy: userId,
+  })
 
   if (!deletedJob) {
     return next(new AppError('No job found with that ID', 404));

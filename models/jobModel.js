@@ -1,11 +1,19 @@
 const mongoose = require('mongoose')
+// const { default: validator } = require("validator");
 
 const JobSchema = new mongoose.Schema(
   {
     company: {
       type: String,
+      trim: true,
       required: [true, 'Please provide the company name.'],
       maxlength: [50, 'Company name should be at most 50 characters.'],
+      validate: {
+        validator: function (value) {
+          return !/^\s*$/.test(value); // Check if the value is not only whitespace
+        },
+        message: 'Please provide a valid company name',
+      },
     },
     position: {
       type: String,
