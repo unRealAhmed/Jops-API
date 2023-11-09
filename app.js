@@ -1,17 +1,47 @@
 require("dotenv").config({ path: './config.env' }); // Load environmental variables
 const express = require('express');
+const rateLimit = require("express-rate-limit");
+const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
+const xss = require("xss-clean");
+const hpp = require("hpp");
+const cookieParser = require('cookie-parser');
+const cors = require("cors");
 const errorController = require('./controllers/errorController');
 const jobRouter = require('./routes/jobRoutes');
 const userRouter = require('./routes/userRoutes');
 const { protect } = require('./controllers/authController');
+const connectDatabase = require("./utilities/dataBase");
 
 const app = express();
 const port = process.env.PORT || 8000;
 
-const connectDatabase = require("./utilities/dataBase");
-
-// Middleware: Parse JSON in the request body
+// Middleware
+const limiter = rateLimit({
+  max: 200,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many requests from this IP, please try again in an hour!'
+});
+app.use('/api', limiter);
+app.use(cookieParser());
+app.use(cors());
+app.options("*", cors());
 app.use(express.json());
+app.use(express.json({ limit: '100kb' }));
+app.use(helmet());
+app.use(mongoSanitize());
+app.use(xss());
+app.use(
+  hpp({
+    whitelist: [
+      "company",
+      "status",
+      "position",
+      "createdBy",
+      "createdAt",
+    ],
+  })
+);
 
 // Routes
 app.use('/api/v1/jobs', protect, jobRouter);
