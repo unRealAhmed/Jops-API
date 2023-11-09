@@ -29,8 +29,10 @@ module.exports = class APIFeatures {
     if (this.queryString.sort) {
       const sortFields = this.queryString.sort.split(',').join(' ');
       this.query.sort(sortFields);
+    } else {
+      this.query.sort('createdAt')
+      return this;
     }
-    return this;
   }
 
   // Paginate the results based on the page and limit parameters
