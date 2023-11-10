@@ -1,6 +1,6 @@
-# JobStore API
+# JobsHub API
 
-A simple Express.js and Mongoose-based API for creating and searching for jobs.
+A simple Express.js and Mongoose-based API for job management, search, and user authentication.
 
 ## Table of Contents
 
@@ -9,10 +9,11 @@ A simple Express.js and Mongoose-based API for creating and searching for jobs.
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
 - [Authentication](#authentication)
+- [GitHub Repository](#github-repository)
 
 ## Features
 
-- **Job Management:** Create, read, update, and delete job entries.
+- **Job Management:** CRUD operations for job entries.
 - **Job Search:** Find jobs based on different criteria.
 - **User Authentication:** Secure your API with user authentication.
 - **Data Validation:** Ensure data integrity with input validation.
@@ -20,19 +21,19 @@ A simple Express.js and Mongoose-based API for creating and searching for jobs.
 
 ## Prerequisites
 
-Before running the JobStore API, ensure you have the following prerequisites installed:
+Before running the JobsHub API, ensure you have the following prerequisites installed:
 
 - [Node.js](https://nodejs.org/)
 - [MongoDB](https://www.mongodb.com/) (with connection details configured in a .env file)
 
 ## Usage
 
-Once the server is running, you can interact with the API using tools like [Postman](https://www.postman.com/) or by integrating it into your application.
+Once the server is running, interact with the API using tools like [Postman](https://www.postman.com/) or integrate it into your application.
 
 ## API Endpoints
 
 - `GET /api/v1/jobs`: Retrieve a list of jobs.
-- `GET /api/v1/jobs/:id`: Retrieve details of a specific job.
+- `GET /api/v1/jobs/stats`: Retrieve statistics about your job entries.
 - `POST /api/v1/jobs`: Create a new job.
 - `PATCH /api/v1/jobs/:id`: Update details of a specific job.
 - `DELETE /api/v1/jobs/:id`: Delete a specific job.
