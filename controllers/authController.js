@@ -184,7 +184,6 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
-  console.log(hashedToken);
   // 2) Check if the token is valid an  d not expired
   if (!user) {
     return next(new AppError('Token is invalid or has expired. Please request a new password reset.', 400));
@@ -206,7 +205,6 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 exports.updatePassword = asyncHandler(async (req, res, next) => {
   // 1) Find the user by ID and select the password field
   const user = await User.findById(req.user._id).select("+password");
-
   // 2) Check if the entered current password is correct
   const isPasswordCorrect = await user.passwordMatching(
     req.body.currentPassword,
@@ -216,7 +214,6 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
   if (!isPasswordCorrect) {
     return next(new AppError("Your current password is incorrect", 401));
   }
-
   // 3) Update the user's password with the new one and save the changes
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
@@ -224,7 +221,7 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
 
   user.password = undefined;
 
-  sendTokenResponse(res, user, 201);
+  sendTokenResponse(res, user, 200);
 });
 
 exports.restrictTo = (...permittedRoles) => (req, res, next) => {

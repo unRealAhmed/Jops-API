@@ -9,6 +9,12 @@ module.exports = class APIFeatures {
   filter() {
     const queryObj = JSON.parse(JSON.stringify(this.queryString));
 
+    // Include the search functionality
+    if (queryObj.search) {
+      queryObj.position = { $regex: queryObj.search, $options: 'i' };
+      delete queryObj.search; // Remove the original search parameter
+    }
+
     const filteredQuery = Object.keys(queryObj)
       .filter(key => !this.excludedFields.includes(key))
       .reduce((obj, key) => {

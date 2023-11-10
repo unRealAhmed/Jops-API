@@ -38,6 +38,11 @@ const JobSchema = new mongoose.Schema(
       ref: 'User',
       required: [true, 'Please provide the user.'],
     },
+    jobType: {
+      type: String,
+      enum: ['full-time', 'part-time', 'remote', 'internship'],
+      default: 'full-time',
+    }
   },
   { timestamps: true } // Adds createdAt and updatedAt timestamps
 );

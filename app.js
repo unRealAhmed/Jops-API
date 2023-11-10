@@ -15,7 +15,6 @@ const cors = require("cors");
 const errorController = require('./controllers/errorController');
 const jobRouter = require('./routes/jobRoutes');
 const userRouter = require('./routes/userRoutes');
-const { protect } = require('./controllers/authController');
 const connectDatabase = require("./utilities/dataBase");
 
 // Initialize Express app
@@ -54,7 +53,7 @@ app.use(
 );
 
 // Define routes for jobs and users, protecting job routes with authentication
-app.use('/api/v1/jobs', protect, jobRouter);
+app.use('/api/v1/jobs', jobRouter);
 app.use('/api/v1/users', userRouter);
 
 // Connect to the database
