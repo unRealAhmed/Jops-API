@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const { default: validator } = require("validator");
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+
 
 // Define the schema for the User model
 const userSchema = new mongoose.Schema({
@@ -36,16 +38,34 @@ const userSchema = new mongoose.Schema({
       message: "Passwords are not the same!",
     },
   },
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
   // Timestamp of password change
   passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
+
 });
 
-// Compare Passwords
+// COMPARING PASSWORDS
 userSchema.methods.passwordMatching = async function (enteredPassword, userPassword) {
   return await bcrypt.compare(enteredPassword, userPassword);
 };
 
 // PASSWORD CHANGE CHECK
+userSchema.methods.changedPasswordAfter = function (tokenIssuedAt) {
+  if (this.passwordChangedAt) {
+    // Convert passwordChangedAt timestamp to seconds
+    const changedTimestamp = this.passwordChangedAt.getTime() / 1000;
+    return tokenIssuedAt < changedTimestamp;
+  }
+  return false;
+};
+
+//PASSWORD CHANGE CHECKER
 userSchema.methods.changedPasswordAfter = function (tokenIssuedAt) {
   if (this.passwordChangedAt) {
     // Convert passwordChangedAt timestamp to seconds
@@ -76,6 +96,24 @@ userSchema.pre('save', async function (next) {
     return next(error);
   }
 });
+
+//PASSWORD RESET TOKEN GENERATOR
+userSchema.methods.createPasswordResetToken = function () {
+  // Generate a random reset token
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  // Hash the token and set it on the user
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  // Set an expiration time for the token (10 minutes)
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  // Return the unhashed token for use in the email
+  return resetToken;
+};
 
 // Create the User model
 const User = mongoose.model('User', userSchema);

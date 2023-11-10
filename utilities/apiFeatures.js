@@ -27,13 +27,32 @@ module.exports = class APIFeatures {
   // Sort the query based on the sort parameter
   sort() {
     if (this.queryString.sort) {
-      const sortFields = this.queryString.sort.split(',').join(' ');
+      const { sort } = this.queryString;
+      let sortFields;
+
+      // Add custom sorting options
+      if (sort === 'latest') {
+        sortFields = '-createdAt';
+      } else if (sort === 'oldest') {
+        sortFields = 'createdAt';
+      } else if (sort === 'a-z') {
+        sortFields = 'position';
+      } else if (sort === 'z-a') {
+        sortFields = '-position';
+      } else {
+        // Default sorting by createdAt
+        sortFields = 'createdAt';
+      }
+
       this.query.sort(sortFields);
     } else {
-      this.query.sort('createdAt')
-      return this;
+      // Default sorting by createdAt if no sort parameter is provided
+      this.query.sort('createdAt');
     }
+
+    return this;
   }
+
 
   // Paginate the results based on the page and limit parameters
   paginate() {
